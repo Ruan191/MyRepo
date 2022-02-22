@@ -184,15 +184,17 @@ namespace MyRepo.Controllers
         }
 
         [HttpPost]
-        public HttpRequestMessage Delete(IFormCollection del)
+        //[ValidateAntiForgeryToken]
+        //[Route("[controller]/{id}/[action]")]
+        public HttpResponseMessage Delete([FromBody] DeleteData del)
         {
+            IdentityUser identityUser = _db.Users.Single(x => x.UserName == User.Identity.Name);
+            Item item = _db.Items.FirstOrDefault(e => e.Id == del.Id);
 
-            if (ValidateFileName(Path.GetFileNameWithoutExtension(del.Keys.ToArray()[0])))
+            if (ValidateFileName(Path.GetFileNameWithoutExtension(item.Name)))
             {
-                IdentityUser identityUser = _db.Users.Single(x => x.UserName == User.Identity.Name);
-                Item a = _db.Items.FirstOrDefault(e => e.Owner.Id == identityUser.Id && e.Name == del.Keys.ToArray()[0]);
-                _db.Items.Remove(a);
-                string file = del.Keys.ToArray()[0].ToString();
+                _db.Items.Remove(item);
+                string file = item.Name;
                 string fileLocation = @$"{GetFilePath()}\{User.Identity.Name}\{file}";
 
                 System.IO.File.Delete(fileLocation);
@@ -200,7 +202,12 @@ namespace MyRepo.Controllers
                 _db.SaveChanges();
             }
 
-            return null;
+            return new HttpResponseMessage(HttpStatusCode.OK);
+        }
+
+        public class DeleteData
+        {
+            public int Id { get; set; }
         }
 
         bool ValidateFileName(string fileName)

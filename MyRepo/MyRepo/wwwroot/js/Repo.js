@@ -1,5 +1,8 @@
-﻿document.addEventListener('DOMContentLoaded', () => {
+﻿let username;
+
+document.addEventListener('DOMContentLoaded', () => {
     const repoItems = document.getElementsByName("_repoItem");
+    username = document.getElementsByName("username").innerHTML;
     for (const item of repoItems) {
         new RepoItem(item.id).onEditModeOff();
     }
@@ -31,12 +34,12 @@ class RepoItem {
             saveBtn: document.getElementById(id + " save")
         }
 
-        this.buttons.delBtn.addEventListener('click', () => this.del(id));
+        this.buttons.delBtn.addEventListener('click', async () => await this.del(id));
         this.buttons.editBtn.addEventListener('click', () => this.setEditMode());
         this.buttons.saveBtn.addEventListener('click',async () => await this.save());
     }
 
-    del(id) {
+    async del(id) {
         if (!this.editMode) return;
 
         const t = document.getElementById(id);
@@ -45,10 +48,24 @@ class RepoItem {
         t.childNodes.forEach(e => {
             e.parentElement.innerHTML = "";
         })
+
+        await fetch(`${username}/Delete`, {
+            method: 'Post',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "Id": Number(this.id),
+            })
+        }).then(r => {
+            console.log("-> " + r);
+        }).catch(e => {
+            console.log(e);
+        })
     }
 
     async save() {
-        await fetch("tt@gmail.com/Save", {
+        await fetch(`${username}/Save`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
