@@ -1,0 +1,31 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+#s_btn {
+    margin-left: -1px;
+    border-style: solid;
+    border-radius: 1px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+#searchBar {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}

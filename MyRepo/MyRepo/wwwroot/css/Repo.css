@@ -1,0 +1,18 @@
+﻿
+
+@keyframes srinkk {
+    from {
+        height: 55px;
+    }
+
+    to {
+        height: 0px;
+    }
+}
+
+.srink{
+    height: fit-content;
+    background-color: red;
+    animation-name: srinkk;
+    animation-duration: 0.5s;
+}

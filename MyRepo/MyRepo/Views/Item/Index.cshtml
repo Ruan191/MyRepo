@@ -1,0 +1,108 @@
+﻿@model IEnumerable<UserItem>
+
+@{
+    bool IsOwnRepo = ViewBag.IsOwnRepo;
+    bool HasContent = ViewBag.HasContent;
+
+    <link rel="stylesheet" href="~/css/Repo.css" />
+    if (IsOwnRepo)
+    { 
+        <h1>Item Index Page</h1>
+        <div style="text-align: right; width: 100%">
+
+        </div>
+        <a href="@User.Identity.Name/Create">Create</a>
+    }
+
+    if (!HasContent && !IsOwnRepo)
+    {
+         <link rel="stylesheet" href="~/css/empty.css" />
+        <div id="main">
+            <h1>Empty</h1>
+            <img src="https://c.tenor.com/WaDqqs149RMAAAAC/crying-penguin.gif" />
+            <div>
+                The user was either not found or has no public repos
+            </div>
+        </div>
+    }
+    else
+    {
+        <table class="table">
+            <input type="hidden" name="__RequestVerificationToken" value=""/>
+            <tr>
+                <th>Owner</th>
+                <th>Item Name</th>
+                <th>Item Description</th>
+                <th>Item Is Public</th>
+                <th>Item Size</th>
+                <th>Item</th>
+            </tr>
+            @foreach(var obj in Model)
+            {
+                <form method="post" enctype="multipart/form-data" onsubmit="del(`@obj.Item.Name`)">
+                    <input type="hidden" name="@obj.Item.Id">
+                    <tr id="@obj.Item.Id" name="_repoItem">
+                        <td>
+                            <div>
+                                @obj.Item.Owner.UserName
+                            </div>
+                        </td>
+                        <td>
+                            @obj.Item.Name
+                        </td>
+                        <td>
+                            <span name="@obj.Item.Id d">@obj.Item.Description</span>
+                            <textarea id="@obj.Item.Id desc" class="form-control" rows="3" style="display: none">@obj.Item.Description</textarea>
+                        </td>
+                        <td>
+                            <span name="@obj.Item.Id d">@obj.Item.isPublic.ToString().ToLower()</span>
+                            @{
+                                if (obj.Item.isPublic)
+                                {
+                                    <input type="checkbox" id="@obj.Item.Id isP" value="@obj.Item.isPublic" style="display: none" checked>
+                                }
+                                else
+                                {
+                                    <input type="checkbox" id="@obj.Item.Id isP" value="@obj.Item.isPublic" style="display: none">
+                                }
+                            }
+                        </td>
+                        <td>
+                            @obj.Item.Size KB
+                        </td>
+                        <td>
+                            <div style="width: fit-content; float: left">
+                                <button type="submit" id="@obj.Item.Id down" class="btn btn-success" asp-controller="Item" asp-action="GetFile"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+  <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+  <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+</svg></button>
+                                    @{
+                                        if (IsOwnRepo)
+                                        {
+                                            <button type="submit" id="@obj.Item.Id del" class="btn btn-danger" asp-controller="Item" asp-action="Delete"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+  <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+</svg></button>
+                                            <button type="button" id="@obj.Item.Id save" class="btn btn-warning"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-save" viewBox="0 0 16 16">
+  <path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9.5a1 1 0 0 0-1 1v7.293l2.646-2.647a.5.5 0 0 1 .708.708l-3.5 3.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L7.5 9.293V2a2 2 0 0 1 2-2H14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h2.5a.5.5 0 0 1 0 1H2z"/>
+</svg></button>
+                                            <button type="button" id="@obj.Item.Id edit" class="btn btn-primary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+  <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+  <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+</svg></button>
+                                        }
+                                    }
+                            </div>
+                        </td>
+                    </tr>
+                </form>
+            }
+        </table>
+    }
+
+    if (IsOwnRepo)
+    {
+      <script type="text/javascript" src="~/js/Repo.js">
+    </script>  
+    }
+}
