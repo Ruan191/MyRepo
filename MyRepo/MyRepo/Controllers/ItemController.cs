@@ -33,7 +33,6 @@ namespace MyRepo.Controllers
             IEnumerable<UserItem> users;
             string user = id.ToLower();
             ViewBag.IsOwnRepo = IsOwnRepo(user);
-            ViewBag.HasContent = true;
 
             if (User.Identity.Name == user)
             {
@@ -45,6 +44,11 @@ namespace MyRepo.Controllers
                 IdentityUser identityUser = _db.Users.Single(x => x.UserName == user);
                 userItems = _db.UserItems.Include(x => x.Item).Include(x => x.User).Where(x => x.User == identityUser && x.Item.isPublic).ToArray();
             }
+
+            if (userItems.Length == 0)
+                ViewBag.HasContent = false;
+            else
+                ViewBag.HasContent = true;
 
             return View(userItems.ToList());
         }
@@ -88,7 +92,7 @@ namespace MyRepo.Controllers
             {
                 Err err = new Err("File name is not accepted");
                 ViewBag.Error = err.ErrorMsg;
-                return View();
+                return View("Create");
             }
             if (item != null)
             {
@@ -138,7 +142,7 @@ namespace MyRepo.Controllers
             {
                 Err err = new Err("Item was null");
                 ViewBag.Error = err.ErrorMsg;
-                return View();
+                return View("Create");
             }
         }
 
@@ -235,7 +239,7 @@ namespace MyRepo.Controllers
 
         bool IsOwnRepo(string id)
         {
-            if (User.Identity.Name == id) return true;
+            if (User.Identity.Name.ToLower() == id) return true;
 
             return false;
         }
